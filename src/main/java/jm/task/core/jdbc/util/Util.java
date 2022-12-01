@@ -17,17 +17,5 @@ public class Util {
         return DriverManager.getConnection(connectionURL, userName,
                 password);
     }
-
-    public static void main(String[] args) throws SQLException,
-            ClassNotFoundException {
-
-        System.out.println("Get connection ... ");
-
-        Connection conn = Util.getMyConnection();
-
-        System.out.println("Get connection " + conn);
-
-        System.out.println("Done!");
-    }
 }
 

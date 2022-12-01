@@ -6,26 +6,19 @@ import jm.task.core.jdbc.util.Util;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UserDaoJDBCImpl implements UserDao {
 
     private static final Logger log = Logger.getLogger(UserDaoJDBCImpl.class.getName());
-    private Connection connection;
 
     public UserDaoJDBCImpl() {
-        try {
-            connection = Util.getMyConnection();
-            log.log(Level.INFO,  "New database connection established");
-        } catch (SQLException | ClassNotFoundException e) {
-            log.log(Level.SEVERE, "Exception: ", e);
-        }
+
     }
 
     public void createUsersTable() {
-        try {
+        try (Connection connection = Util.getMyConnection()) {
             connection.createStatement().execute(
                     "CREATE TABLE Users (" +
                             "uId BIGINT AUTO_INCREMENT," +
@@ -36,22 +29,24 @@ public class UserDaoJDBCImpl implements UserDao {
                             "UNIQUE INDEX `uId_UNIQUE` (`uId` ASC) VISIBLE)"
             );
             log.log(Level.INFO,  "Table created");
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             log.log(Level.SEVERE, "Exception: ", e);
         }
     }
 
     public void dropUsersTable() {
-        try {
+        try (Connection connection = Util.getMyConnection()) {
             connection.createStatement().execute("DROP TABLE Users");
             log.log(Level.INFO,  "Table dropped");
         } catch (SQLException e) {
             log.log(Level.INFO,  e.getMessage());
+        } catch (ClassNotFoundException ex) {
+            log.log(Level.SEVERE,  ex.getMessage());
         }
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        try {
+        try (Connection connection = Util.getMyConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Users (uName, uLastName, uAge) VALUES (?, ?, ?)");
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
@@ -60,18 +55,18 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.executeUpdate();
 
             log.log(Level.INFO, "User с именем – {0} добавлен в базу данных", name);
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             log.log(Level.SEVERE, "Exception: ", e);
         }
     }
 
     public void removeUserById(long id) {
-        try {
+        try (Connection connection = Util.getMyConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Users WHERE uId = ?");
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
             log.log(Level.INFO, "User with {0} id removed", id);
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             log.log(Level.SEVERE, "Exception: ", e);
         }
     }
@@ -79,7 +74,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
 
-        try {
+        try (Connection connection = Util.getMyConnection()) {
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT uName, uLastName, uAge FROM Users");
             while (resultSet.next()) {
                 users.add(new User(
@@ -89,17 +84,17 @@ public class UserDaoJDBCImpl implements UserDao {
                 ));
             }
             log.log(Level.INFO, "Get all users ok");
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             log.log(Level.SEVERE, "Exception: ", e);
         }
         return users;
     }
 
     public void cleanUsersTable() {
-        try {
+        try (Connection connection = Util.getMyConnection()) {
             connection.createStatement().execute("DELETE FROM Users");
             log.log(Level.INFO, "Table cleared");
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             log.log(Level.SEVERE, "Exception: ", e);
         }
     }
