@@ -24,7 +24,7 @@ public class UserDaoJDBCImpl implements UserDao {
                             "uId BIGINT AUTO_INCREMENT," +
                             "uName VARCHAR(45)," +
                             "uLastName VARCHAR(45)," +
-                            "uAge SMALLINT," +
+                            "uAge TINYINT," +
                             "PRIMARY KEY (`uId`)," +
                             "UNIQUE INDEX `uId_UNIQUE` (`uId` ASC) VISIBLE)"
             );

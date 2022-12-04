@@ -1,27 +1,31 @@
 package jm.task.core.jdbc.model;
 
+import com.sun.istack.NotNull;
 import jm.task.core.jdbc.service.UserServiceImpl;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-@Table
+@Entity
+@Table (name = "Users")
 public class User {
     @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @Column(name = "uId", nullable = false, unique = true)
     private Long id;
 
-    @Column
+    @Column(name = "uName", length = 45)
+    @NotNull
     private String name;
 
-    @Column
+    @Column (name = "uLastName", length = 45)
+    @NotNull
     private String lastName;
 
-    @Column
+    @Column (name = "uAge")
+    @NotNull
     private Byte age;
 
     public User() {
-
     }
 
     public User(String name, String lastName, Byte age) {
@@ -32,10 +36,6 @@ public class User {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -65,6 +65,5 @@ public class User {
     @Override
     public String toString() {
         return this.name + " " + this.lastName + " " + this.age;
-        // return new UserServiceImpl().getAllUsers().toString();
     }
 }
